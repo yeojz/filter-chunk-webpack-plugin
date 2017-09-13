@@ -3,39 +3,55 @@ import omit from 'lodash.omit';
 import pick from 'lodash.pick';
 
 class FilterChunkWebpackPlugin {
-  constructor(options) {
+  constructor(options = {}) {
     if (!Array.isArray(options.patterns)) {
-      throw new Error('[FilterChunkWebpackPlugin] The "patterns" option should be an array');
+      throw new Error('The "patterns" option should be an array');
     }
 
     this.options = Object.assign({
+      debug: this.log,
       include: false,
       patterns: [],
       preview: false
     }, options);
   }
-  
+
+  log(...args) {
+    // eslint-disable-next-line no-console
+    console.log(...args);
+  }
+
+  filter(...args) {
+    if (this.options.include === true) {
+      return pick(...args);
+    }
+
+    return omit(...args);
+  }
+
   previewMatchedFiles(matchedFiles) {
     const action = this.options.include === true ? 'included' : 'excluded';
 
-    console.log(`${matchedFiles.length} file(s) that will be ${action}`);
-    matchedFiles.forEach((file) => console.log('     %s', file));
-    console.log('');
+    this.options.debug(`${matchedFiles.length} file(s) that will be ${action}`);
+    matchedFiles.forEach((file) => {
+      this.options.debug(file);
+    });
+    this.options.debug('');
   }
 
   apply(compiler) {
-    const filter = this.options.include === true ? pick : omit;
-
-    
     compiler.plugin('emit', (compilation, callback) => {
-      const files = Object.keys(compilation.assets);
-      const matchedFiles = multimatch(files, this.options.patterns);
 
-      if (this.options.preview) {
-        this.previewMatchedFiles(matchedFiles);
-      } else {
-        // eslint-disable-next-line no-param-reassign
-        compilation.assets = filter(compilation.assets, matchedFiles);
+      if (this.options.patterns.length > 0) {
+        const files = Object.keys(compilation.assets);
+        const matchedFiles = multimatch(files, this.options.patterns);
+
+        if (this.options.preview) {
+          this.previewMatchedFiles(matchedFiles);
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          compilation.assets = this.filter(compilation.assets, matchedFiles);
+        }
       }
 
       callback();

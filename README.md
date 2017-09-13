@@ -5,15 +5,13 @@
 [![npm][npm-badge]][npm-link]
 [![Build Status][circle-badge]][circle-link]
 
-This is a webpack plugin that allows you to filter the final output files
-before they are being written to disk. This is useful if you're creating
-multiple output bundles with common assets. As such, you can use this
-to omit it in other runs.
+This webpack plugin allows you to filter the list of output files before
+they are being written / emitted to disk. It does not prevent files
+from `import` or `require` from being processed and bundled, keeping the
+file references like image assets in your bundled code.
 
-Unlike the [IgnorePlugin][ignore-plugin-package], this does not prevent
-an `import` or `require` from being bundled, but instead, omits certain
-files from being written to disk, ensuring that any update of references
-due to hashing or other processing will still happen.
+This is useful if you're creating multiple output bundles with common assets.
+As such, you can use this to omit it in other runs.
 
 ## Installation
 
@@ -35,18 +33,18 @@ const webpackConfig = {
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'assets/app.[chunkhash].js',
-    chunkFilename: 'assets/[id].app.[chunkhash].js',
+    chunkFilename: 'assets/[id].app.[chunkhash].js'
   },
   module: {
     rules: [{
-      test: /\.(svg|woff2?|ttf|eot|jpe?g|png|gif)(\?.*)?$/i,
+      test: /\.svg$/,
       use: {
         loader: 'file-loader?name=[path][name]_[hash].[ext]',
         options: {
-          outputPath: 'assets/images/',
+          outputPath: 'assets/images/'
         }
       }
-    }],
+    }]
   },
   plugins: [
     new ExtractTextPlugin({
@@ -55,7 +53,7 @@ const webpackConfig = {
     }),
     new FilterChunkWebpackPlugin({
       patterns: [
-        'assets/*'
+        'assets/*',
         '!assets/css/*'
       ]
     })
@@ -75,15 +73,16 @@ assets/css/css.98a5a.css
 but not
 
 ```
-assets/images/a5b912cd3.png
+assets/images/a5b912cd3.svg
 ```
 
 ## Options
 
-| option   | type    | default | description                                                                                                           |
-| -------- | ------- | ------- | --------------------------------------------------------------------------------------------------------------------- |
-| patterns | array   | `[]`    | a list of pattern types that are supported by [multimatch][multimatch-package]                                        |
-| include  | boolean | `false` | by default, this plugin will omit the matched result. Setting it to true will select only the matched result instead. |
+| options  | type    | defaults | description                                                                                                                  |
+| -------- | ------- | -------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| patterns | array   | `[]`     | A list of pattern types that are supported by [multimatch][multimatch-package]                                               |
+| include  | boolean | `false`  | By default, this plugin will omit the matched result. Setting it to true will include the matched result instead of omitting |
+| preview  | boolean | `false`  | To print the list of chunks that matches the patterns without applying the changes                                           |
 
 ## License
 
