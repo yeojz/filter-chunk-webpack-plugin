@@ -15,11 +15,11 @@ class FilterChunkWebpackPlugin {
     }, options);
   }
   
-  previewOuput(matchingFiles) {
+  previewMatchedFiles(matchedFiles) {
     const action = this.options.include === true ? 'included' : 'excluded';
 
-    console.log('%s file(s) that will be %s:', matchingFiles.length, action);
-    matchingFiles.forEach((file) => console.log('     %s', file));
+    console.log(`${matchedFiles.length} file(s) that will be ${action}`);
+    matchedFiles.forEach((file) => console.log('     %s', file));
     console.log('');
   }
 
@@ -29,13 +29,13 @@ class FilterChunkWebpackPlugin {
     
     compiler.plugin('emit', (compilation, callback) => {
       const files = Object.keys(compilation.assets);
-      const matchingFiles = multimatch(files, this.options.patterns);
+      const matchedFiles = multimatch(files, this.options.patterns);
 
       if (this.options.preview) {
-        this.previewOutput(matchingFiles);
+        this.previewMatchedFiles(matchedFiles);
       } else {
         // eslint-disable-next-line no-param-reassign
-        compilation.assets = filter(compilation.assets, matchingFiles);
+        compilation.assets = filter(compilation.assets, matchedFiles);
       }
 
       callback();
