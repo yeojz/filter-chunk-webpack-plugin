@@ -5,6 +5,7 @@
 .eslintrc.json
 .nyc_output
 .nycrc
+.spec_output
 .travis.yml
 
 /rollup.config.js

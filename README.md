@@ -1,6 +1,6 @@
 # filter-chunk-webpack-plugin
 
-> Include or exclude files / chunks from the final output based on a list of patterns
+> Include or exclude files / chunks from the final webpack output based on a list of patterns
 
 [![npm][npm-badge]][npm-link]
 [![Build Status][circle-badge]][circle-link]
@@ -32,15 +32,15 @@ const webpackConfig = {
   entry: 'index.js',
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'assets/app.[chunkhash].js',
-    chunkFilename: 'assets/[id].app.[chunkhash].js'
+    filename: 'assets/app.[chunkhash].js'
   },
   module: {
     rules: [{
       test: /\.svg$/,
       use: {
-        loader: 'file-loader?name=[path][name]_[hash].[ext]',
+        loader: 'file-loader',
         options: {
+          name: '[hash].[ext]',
           outputPath: 'assets/images/'
         }
       }
@@ -65,8 +65,6 @@ This should generate files like
 
 ```
 assets/app.12ab3c.js
-assets/1.app.3bcd45.js
-
 assets/css/css.98a5a.css
 ```
 
@@ -76,13 +74,14 @@ but not
 assets/images/a5b912cd3.svg
 ```
 
+For more info, check out the [usage.spec.js](./src/usage.spec.js) for more info.
+
 ## Options
 
-| options  | type    | defaults | description                                                                                                                  |
-| -------- | ------- | -------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| patterns | array   | `[]`     | A list of pattern types that are supported by [multimatch][multimatch-package]                                               |
-| include  | boolean | `false`  | By default, this plugin will omit the matched result. Setting it to true will include the matched result instead of omitting |
-| preview  | boolean | `false`  | To print the list of chunks that matches the patterns without applying the changes                                           |
+| options  | type    | default | description                                                                                                                         |
+| -------- | ------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| patterns | array   | `[]`    | A list of pattern types that are supported by [multimatch][multimatch-package]                                                      |
+| select   | boolean | `false` | By default, this plugin will omit the matched result. Setting this to true will include the matched result instead of omitting them |
 
 ## License
 
@@ -95,4 +94,3 @@ assets/images/a5b912cd3.svg
 [circle-link]: https://circleci.com/gh/yeojz/filter-chunk-webpack-plugin
 
 [multimatch-package]: https://github.com/sindresorhus/multimatch
-[ignore-plugin-package]: https://webpack.js.org/plugins/ignore-plugin/

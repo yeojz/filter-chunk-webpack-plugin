@@ -1,10 +1,13 @@
 {
   "name": "filter-chunk-webpack-plugin",
   "version": "0.0.0",
-  "description": "Include or exclude files / chunks from the final output based on a list of patterns",
+  "description": "Include or exclude files / chunks from the final webpack output based on a list of patterns",
   "main": "index.js",
   "scripts": {
     "build": "babel src/index.js --out-file index.js",
+    "clean": "rimraf index.js coverage .spec_output/it-* .nyc_output",
+    "coverage:upload": "codecov",
+    "lint": "eslint --ext js src",
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watch"
   },
@@ -29,7 +32,7 @@
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
-    "babel-register": "^6.26.0",
+    "codecov": "^2.3.0",
     "css-loader": "^0.28.7",
     "eslint": "^4.6.1",
     "extract-text-webpack-plugin": "^3.0.0",
@@ -37,7 +40,6 @@
     "jest": "^21.0.2",
     "rimraf": "^2.6.2",
     "style-loader": "^0.18.2",
-    "url-loader": "^0.5.9",
     "webpack": "^3.5.6"
   },
   "dependencies": {
