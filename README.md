@@ -23,10 +23,12 @@ Install the library via:
 $ npm install filter-chunk-webpack-plugin --save-dev
 ```
 
-| Webpack         | Package Version |
-| --------------- | --------------- |
-| > 4.x.x         | > 2.x.x         |
-| 3.x.x and below | 1.x.x           |
+### Tested Versions
+
+| Webpack | Package Version |
+| ------- | --------------- |
+| 4.x.x   | > 2.x.x         |
+| 3.x.x   | 1.x.x           |
 
 ## Basic Usage
 
@@ -88,7 +90,7 @@ but not
 assets/images/a5b912cd3.svg
 ```
 
-For more info, check out the [usage.spec.js](./src/usage.spec.js) for more info.
+For more information, check out the [usage.spec.js](./src/usage.spec.js).
 
 ## Options
 
