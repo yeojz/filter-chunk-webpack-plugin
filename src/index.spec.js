@@ -5,14 +5,19 @@ describe('FilterChunkWebpackPlugin', function () {
 
   it('should set options from constructor', function () {
     const plugin = new FilterChunkWebpackPlugin({
-      include: true,
-      preview: true,
+      select: true,
       patterns: ['**/**']
     });
 
-    expect(plugin.options.include).toBe(true);
-    expect(plugin.options.preview).toBe(true);
+    expect(plugin.options.select).toBe(true);
     expect(plugin.options.patterns).toEqual(['**/**']);
+  });
+
+  it('should set defaults from constructor', function () {
+    const plugin = new FilterChunkWebpackPlugin();
+
+    expect(plugin.options.select).toEqual(false);
+    expect(plugin.options.patterns).toEqual([]);
   });
 
   it('should throw an Error when patterns is not array', function () {

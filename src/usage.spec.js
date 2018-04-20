@@ -1,6 +1,6 @@
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import path from 'path';
 import webpack from 'webpack';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import FilterChunkWebpackPlugin from './index';
 
 const OUTPUT_ROOT = path.join(path.resolve(__dirname), '..', '.spec_output');
@@ -36,7 +36,7 @@ describe('Webpack with FilterChunkWebpackPlugin', function () {
       expect(stats.compilation.warnings.length).toEqual(0);
       expect(assets).toHaveLength(2);
       expect(assets).toContain('app.js');
-      expect(assets).toContain('assets/css/style.css');
+      expect(assets).toContain('assets/css/app.css');
 
       done();
     });
@@ -67,6 +67,7 @@ describe('Webpack with FilterChunkWebpackPlugin', function () {
 
 function generateWebpackConfiguration(outputFolder, options) {
   return {
+    mode: 'production',
     entry: {
       app: path.join(INPUT_ROOT, 'app.js')
     },
@@ -77,20 +78,10 @@ function generateWebpackConfiguration(outputFolder, options) {
     module: {
       rules: [{
         test: /\.css$/,
-        use: ExtractTextPlugin.extract({
-          fallback: {
-            loader: 'style-loader',
-            options: {
-              singleton: true
-            },
-          },
-          use: [{
-            loader: 'css-loader',
-            options: {
-              importLoaders: 1
-            }
-          }]
-        })
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader"
+        ]
       }, {
         test: /\.(svg|png)$/,
         use: {
@@ -103,8 +94,9 @@ function generateWebpackConfiguration(outputFolder, options) {
       }]
     },
     plugins: [
-      new ExtractTextPlugin({
-        filename: 'assets/css/style.css',
+      new MiniCssExtractPlugin({
+        filename: "assets/css/[name].css",
+        chunkFilename: "assets/css/[id].css"
       }),
       new FilterChunkWebpackPlugin(options)
     ]
