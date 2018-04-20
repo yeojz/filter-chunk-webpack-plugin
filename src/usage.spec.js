@@ -6,11 +6,11 @@ import FilterChunkWebpackPlugin from './index';
 const OUTPUT_ROOT = path.join(path.resolve(__dirname), '..', '.spec_output');
 const INPUT_ROOT = path.join(path.resolve(__dirname), '..', 'fixtures');
 
-describe('Webpack with FilterChunkWebpackPlugin', function () {
-  it('[1] should not modify assets by default', function (done) {
+describe('Webpack with FilterChunkWebpackPlugin', function() {
+  it('[1] should not modify assets by default', function(done) {
     const config = generateWebpackConfiguration('it-1');
 
-    webpack(config, function (err, stats) {
+    webpack(config, function(err, stats) {
       const assets = Object.keys(stats.compilation.assets);
 
       expect(err).toBeFalsy();
@@ -21,15 +21,12 @@ describe('Webpack with FilterChunkWebpackPlugin', function () {
     });
   });
 
-  it('[2] should omit all relevant matches', function (done) {
+  it('[2] should omit all relevant matches', function(done) {
     const config = generateWebpackConfiguration('it-2', {
-      patterns: [
-        'assets/**',
-        '!assets/css/**'
-      ]
+      patterns: ['assets/**', '!assets/css/**']
     });
 
-    webpack(config, function (err, stats) {
+    webpack(config, function(err, stats) {
       const assets = Object.keys(stats.compilation.assets);
 
       expect(err).toBeFalsy();
@@ -42,16 +39,13 @@ describe('Webpack with FilterChunkWebpackPlugin', function () {
     });
   });
 
-  it('[3] should pick all relevant matches', function (done) {
+  it('[3] should pick all relevant matches', function(done) {
     const config = generateWebpackConfiguration('it-3', {
       select: true,
-      patterns: [
-        'assets/**',
-        '!assets/css/**'
-      ]
+      patterns: ['assets/**', '!assets/css/**']
     });
 
-    webpack(config, function (err, stats) {
+    webpack(config, function(err, stats) {
       const assets = Object.keys(stats.compilation.assets);
 
       expect(err).toBeFalsy();
@@ -76,29 +70,29 @@ function generateWebpackConfiguration(outputFolder, options) {
       filename: '[name].js'
     },
     module: {
-      rules: [{
-        test: /\.css$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          "css-loader"
-        ]
-      }, {
-        test: /\.(svg|png)$/,
-        use: {
-          loader: 'file-loader',
-          options: {
-            name: '[ext].[ext]',
-            outputPath: 'assets/images/'
+      rules: [
+        {
+          test: /\.css$/,
+          use: [MiniCssExtractPlugin.loader, 'css-loader']
+        },
+        {
+          test: /\.(svg|png)$/,
+          use: {
+            loader: 'file-loader',
+            options: {
+              name: '[ext].[ext]',
+              outputPath: 'assets/images/'
+            }
           }
         }
-      }]
+      ]
     },
     plugins: [
       new MiniCssExtractPlugin({
-        filename: "assets/css/[name].css",
-        chunkFilename: "assets/css/[id].css"
+        filename: 'assets/css/[name].css',
+        chunkFilename: 'assets/css/[id].css'
       }),
       new FilterChunkWebpackPlugin(options)
     ]
-  }
+  };
 }

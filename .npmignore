@@ -7,6 +7,7 @@
 .nycrc
 .spec_output
 .travis.yml
+.npmrc
 
 /rollup.config.js
 /webpack.config.js
@@ -21,3 +22,4 @@ tests
 webpack.config.js
 temp
 fixtures
+
