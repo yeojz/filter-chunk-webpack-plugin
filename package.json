@@ -1,6 +1,6 @@
 {
   "name": "filter-chunk-webpack-plugin",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Include or exclude files / chunks from the final webpack output based on a list of patterns",
   "main": "index.js",
   "scripts": {
