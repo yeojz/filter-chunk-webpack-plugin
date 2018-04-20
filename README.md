@@ -4,6 +4,8 @@
 
 [![npm][npm-badge]][npm-link]
 [![Build Status][circle-badge]][circle-link]
+[![Coverage Status][codecov-badge]][codecov-link]
+[![PRs Welcome][pr-welcome-badge]][pr-welcome-link]
 
 This webpack plugin allows you to filter the list of output files before
 they are being written / emitted to disk. It does not prevent files
@@ -21,11 +23,19 @@ Install the library via:
 $ npm install filter-chunk-webpack-plugin --save-dev
 ```
 
+### Tested Versions
+
+| Webpack | Package Version |
+| ------- | --------------- |
+| 4.x.x   | > 2.x.x         |
+| 3.x.x   | 1.x.x           |
+
 ## Basic Usage
 
 ```js
-const FilterChunkWebpackPlugin = require('filter-chunk-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const FilterChunkWebpackPlugin = require('filter-chunk-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 
 const webpackConfig = {
@@ -36,6 +46,12 @@ const webpackConfig = {
   },
   module: {
     rules: [{
+      test: /\.css$/,
+      use: [
+        MiniCssExtractPlugin.loader,
+        "css-loader"
+      ]
+    }, {
       test: /\.svg$/,
       use: {
         loader: 'file-loader',
@@ -47,10 +63,10 @@ const webpackConfig = {
     }]
   },
   plugins: [
-    new ExtractTextPlugin({
-      filename: 'assets/css/css.[contenthash].css',
-      allChunks: true
-    }),
+    new MiniCssExtractPlugin({
+      filename: "assets/css/[contenthash].css",
+      chunkFilename: "assets/css/[id].css"
+    })
     new FilterChunkWebpackPlugin({
       patterns: [
         'assets/*',
@@ -74,7 +90,7 @@ but not
 assets/images/a5b912cd3.svg
 ```
 
-For more info, check out the [usage.spec.js](./src/usage.spec.js) for more info.
+For more information, check out the [usage.spec.js](./src/usage.spec.js).
 
 ## Options
 
@@ -89,8 +105,10 @@ For more info, check out the [usage.spec.js](./src/usage.spec.js) for more info.
 
 [npm-badge]: https://img.shields.io/npm/v/filter-chunk-webpack-plugin.svg?style=flat-square
 [npm-link]: https://www.npmjs.com/package/filter-chunk-webpack-plugin
-
 [circle-badge]: https://img.shields.io/circleci/project/github/yeojz/filter-chunk-webpack-plugin/master.svg?style=flat-square
 [circle-link]: https://circleci.com/gh/yeojz/filter-chunk-webpack-plugin
-
 [multimatch-package]: https://github.com/sindresorhus/multimatch
+[pr-welcome-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
+[pr-welcome-link]: https://github.com/yeojz/filter-chunk-webpack-plugin/blob/master/CONTRIBUTING.md
+[codecov-badge]: https://img.shields.io/codecov/c/github/yeojz/filter-chunk-webpack-plugin/master.svg?style=flat-square
+[codecov-link]: https://codecov.io/gh/yeojz/filter-chunk-webpack-plugin
