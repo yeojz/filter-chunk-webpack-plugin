@@ -6,56 +6,63 @@ import FilterChunkWebpackPlugin from './index';
 const OUTPUT_ROOT = path.join(path.resolve(__dirname), '..', '.spec_output');
 const INPUT_ROOT = path.join(path.resolve(__dirname), '..', 'fixtures');
 
-describe('Webpack with FilterChunkWebpackPlugin', function() {
-  it('[1] should not modify assets by default', function(done) {
-    const config = generateWebpackConfiguration('it-1');
+jest.setTimeout(10000);
 
-    webpack(config, function(err, stats) {
-      const assets = Object.keys(stats.compilation.assets);
+test('[1] should not modify assets by default', done => {
+  const config = generateWebpackConfiguration('it-1');
 
-      expect(err).toBeFalsy();
-      expect(stats.compilation.warnings.length).toEqual(0);
-      expect(assets).toHaveLength(4);
+  const compiler = webpack(config);
 
-      done();
-    });
+  compiler.run((err, stats) => {
+    const assets = Object.keys(stats.compilation.assets);
+
+    expect(err).toBeFalsy();
+    expect(stats.hasErrors()).toBeFalsy();
+    expect(stats.hasWarnings()).toBeFalsy();
+    expect(assets).toHaveLength(4);
+
+    done();
+  });
+});
+
+test('[2] should omit all relevant matches', done => {
+  const config = generateWebpackConfiguration('it-2', {
+    patterns: ['assets/**', '!assets/css/**']
   });
 
-  it('[2] should omit all relevant matches', function(done) {
-    const config = generateWebpackConfiguration('it-2', {
-      patterns: ['assets/**', '!assets/css/**']
-    });
+  const compiler = webpack(config);
+  compiler.run((err, stats) => {
+    const assets = Object.keys(stats.compilation.assets);
 
-    webpack(config, function(err, stats) {
-      const assets = Object.keys(stats.compilation.assets);
+    expect(err).toBeFalsy();
+    expect(stats.hasErrors()).toBeFalsy();
+    expect(stats.hasWarnings()).toBeFalsy();
+    expect(assets).toHaveLength(2);
+    expect(assets).toContain('app.js');
+    expect(assets).toContain('assets/css/app.css');
 
-      expect(err).toBeFalsy();
-      expect(stats.compilation.warnings.length).toEqual(0);
-      expect(assets).toHaveLength(2);
-      expect(assets).toContain('app.js');
-      expect(assets).toContain('assets/css/app.css');
+    done();
+  });
+});
 
-      done();
-    });
+test('[3] should pick all relevant matches', done => {
+  const config = generateWebpackConfiguration('it-3', {
+    select: true,
+    patterns: ['assets/**', '!assets/css/**']
   });
 
-  it('[3] should pick all relevant matches', function(done) {
-    const config = generateWebpackConfiguration('it-3', {
-      select: true,
-      patterns: ['assets/**', '!assets/css/**']
-    });
+  const compiler = webpack(config);
+  compiler.run((err, stats) => {
+    const assets = Object.keys(stats.compilation.assets);
 
-    webpack(config, function(err, stats) {
-      const assets = Object.keys(stats.compilation.assets);
+    expect(err).toBeFalsy();
+    expect(stats.hasErrors()).toBeFalsy();
+    expect(stats.hasWarnings()).toBeFalsy();
+    expect(assets).toHaveLength(2);
+    expect(assets).toContain('assets/images/png.png');
+    expect(assets).toContain('assets/images/svg.svg');
 
-      expect(err).toBeFalsy();
-      expect(stats.compilation.warnings.length).toEqual(0);
-      expect(assets).toHaveLength(2);
-      expect(assets).toContain('assets/images/png.png');
-      expect(assets).toContain('assets/images/svg.svg');
-
-      done();
-    });
+    done();
   });
 });
 

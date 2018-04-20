@@ -29,7 +29,6 @@
     "url": "https://github.com/yeojz/filter-chunk-webpack-plugin/issues"
   },
   "devDependencies": {
-    "ajv": "^5.5.2",
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "codecov": "^3.0.0",
@@ -53,6 +52,7 @@
       "<rootDir>/index.js"
     ],
     "resetMocks": true,
+    "testEnvironment": "node",
     "testPathIgnorePatterns": [
       "/node_modules/",
       "/dist/",

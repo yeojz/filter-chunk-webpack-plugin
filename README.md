@@ -4,6 +4,7 @@
 
 [![npm][npm-badge]][npm-link]
 [![Build Status][circle-badge]][circle-link]
+[![Coverage Status][codecov-badge]][codecov-link]
 [![PRs Welcome][pr-welcome-badge]][pr-welcome-link]
 
 This webpack plugin allows you to filter the list of output files before
@@ -107,3 +108,5 @@ For more info, check out the [usage.spec.js](./src/usage.spec.js) for more info.
 [multimatch-package]: https://github.com/sindresorhus/multimatch
 [pr-welcome-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
 [pr-welcome-link]: https://github.com/yeojz/filter-chunk-webpack-plugin/blob/master/CONTRIBUTING.md
+[codecov-badge]: https://img.shields.io/codecov/c/github/yeojz/filter-chunk-webpack-plugin/master.svg?style=flat-square
+[codecov-link]: https://codecov.io/gh/yeojz/filter-chunk-webpack-plugin
