@@ -121,11 +121,6 @@ jobs:
           command: npm run codecov
           when: on_success
 
-  node_v6:
-    docker:
-      - image: circleci/node:6
-    <<: *node_tests
-
   node_v10:
     docker:
       - image: circleci/node:10
@@ -147,30 +142,24 @@ workflows:
   version: 2
   dev-builds:
     jobs:
-      - node_v6:
-          filters: *filter_common
       - node_v8:
           filters: *filter_common
       - node_v10:
           filters: *filter_common
   release-builds:
     jobs:
-      - node_v6:
-          filters: *filter_tag_all
       - node_v8:
           filters: *filter_tag_all
       - node_v10:
           filters: *filter_tag_all
       - publish_npm_beta:
           requires:
-            - node_v6
             - node_v8
             - node_v10
           filters: *filter_tag_beta
       - hold:
           type: approval
           requires:
-            - node_v6
             - node_v8
             - node_v10
           filters: *filter_tag_stable
