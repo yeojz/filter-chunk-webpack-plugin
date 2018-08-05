@@ -6,7 +6,7 @@
   "scripts": {
     "build": "babel src/index.js --out-file index.js",
     "clean": "rimraf index.js coverage .spec_output/it-* .nyc_output",
-    "coverage:upload": "codecov",
+    "codecov": "codecov",
     "lint": "eslint --ext js src",
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watch"
