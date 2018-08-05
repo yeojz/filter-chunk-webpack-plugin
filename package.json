@@ -30,16 +30,16 @@
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "codecov": "^3.0.0",
-    "css-loader": "^0.28.7",
-    "eslint": "^4.6.1",
+    "babel-preset-env": "^1.7.0",
+    "codecov": "^3.0.4",
+    "css-loader": "^1.0.0",
+    "eslint": "^5.3.0",
     "file-loader": "^1.1.11",
-    "jest": "^22.4.3",
-    "mini-css-extract-plugin": "^0.4.0",
+    "jest": "^23.4.2",
+    "mini-css-extract-plugin": "^0.4.1",
     "rimraf": "^2.6.2",
     "style-loader": "^0.21.0",
-    "webpack": "^4.6.0"
+    "webpack": "^4.16.4"
   },
   "dependencies": {
     "lodash.omit": "^4.5.0",
