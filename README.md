@@ -19,8 +19,8 @@ As such, you can use this to omit it in other runs.
 
 Install the library via:
 
-```
-$ npm install filter-chunk-webpack-plugin --save-dev
+```bash
+npm install filter-chunk-webpack-plugin --save-dev
 ```
 
 ### Tested Versions
@@ -79,14 +79,14 @@ const webpackConfig = {
 
 This should generate files like
 
-```
+```text
 assets/app.12ab3c.js
 assets/css/css.98a5a.css
 ```
 
 but not
 
-```
+```text
 assets/images/a5b912cd3.svg
 ```
 
@@ -108,7 +108,7 @@ For more information, check out the [usage.spec.js](./src/usage.spec.js).
 [circle-badge]: https://img.shields.io/circleci/project/github/yeojz/filter-chunk-webpack-plugin/master.svg?style=flat-square
 [circle-link]: https://circleci.com/gh/yeojz/filter-chunk-webpack-plugin
 [multimatch-package]: https://github.com/sindresorhus/multimatch
-[pr-welcome-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
+[pr-welcome-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square&longCache=true
 [pr-welcome-link]: https://github.com/yeojz/filter-chunk-webpack-plugin/blob/master/CONTRIBUTING.md
 [codecov-badge]: https://img.shields.io/codecov/c/github/yeojz/filter-chunk-webpack-plugin/master.svg?style=flat-square
 [codecov-link]: https://codecov.io/gh/yeojz/filter-chunk-webpack-plugin
