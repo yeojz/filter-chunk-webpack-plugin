@@ -42,7 +42,7 @@ const webpackConfig = {
   entry: 'index.js',
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'assets/app.[chunkhash].js'
+    filename: 'app.[chunkhash].js'
   },
   module: {
     rules: [{
@@ -80,7 +80,7 @@ const webpackConfig = {
 This should generate files like
 
 ```text
-assets/app.12ab3c.js
+app.12ab3c.js
 assets/css/css.98a5a.css
 ```
 
