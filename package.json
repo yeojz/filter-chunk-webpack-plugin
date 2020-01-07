@@ -2,9 +2,8 @@
   "name": "filter-chunk-webpack-plugin",
   "version": "2.1.0",
   "description": "Include or exclude files / chunks from the final webpack output based on a list of patterns",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "build": "babel src/index.js --out-file index.js",
     "clean": "rimraf index.js coverage .spec_output/it-* .nyc_output",
     "codecov": "codecov",
     "lint": "eslint --ext js src",
@@ -29,8 +28,6 @@
     "url": "https://github.com/yeojz/filter-chunk-webpack-plugin/issues"
   },
   "devDependencies": {
-    "@babel/cli": "^7.7.7",
-    "@babel/preset-env": "^7.7.7",
     "codecov": "^3.6.1",
     "css-loader": "^3.4.1",
     "eslint": "^6.8.0",

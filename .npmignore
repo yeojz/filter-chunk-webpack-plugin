@@ -17,9 +17,9 @@ coverage
 jsdoc.json
 node_modules
 node_modules-*
-src
 tests
 webpack.config.js
 temp
 fixtures
+*.spec.js
 
