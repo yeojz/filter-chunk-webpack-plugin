@@ -1,4 +1,4 @@
-import FilterChunkWebpackPlugin from './index';
+const FilterChunkWebpackPlugin = require('./index');
 
 const PATTERN_ERROR = 'The "patterns" option should be an array';
 

@@ -1,0 +1,25 @@
+name: dev-builds
+on: [push]
+
+jobs:
+  test-node:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [8, 10, 12]
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: setup
+      run: npm ci
+    - name: test
+      run: npm run test
+    - name: lint
+      run: npm run lint
+    - if: matrix.node-version > 10
+      name: upload coverage
+      run: npm run codecov

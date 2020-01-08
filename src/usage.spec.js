@@ -1,7 +1,7 @@
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import path from 'path';
-import webpack from 'webpack';
-import FilterChunkWebpackPlugin from './index';
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const path = require('path');
+const webpack = require('webpack');
+const FilterChunkWebpackPlugin = require('./index');
 
 const OUTPUT_ROOT = path.join(path.resolve(__dirname), '..', '.spec_output');
 const INPUT_ROOT = path.join(path.resolve(__dirname), '..', 'fixtures');

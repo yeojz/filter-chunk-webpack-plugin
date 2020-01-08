@@ -1,7 +1,6 @@
-import multimatch from 'multimatch';
-import omit from 'lodash.omit';
-import pick from 'lodash.pick';
-
+const multimatch = require('multimatch');
+const omit = require('lodash.omit');
+const pick = require('lodash.pick');
 const PLUGIN_NAME = 'FilterChunkWebpackPlugin';
 
 class FilterChunkWebpackPlugin {
