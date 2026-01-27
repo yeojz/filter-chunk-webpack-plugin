@@ -28,3 +28,8 @@ npm-debug.log*
 # Misc
 .env
 .env.local
+
+# Others
+.plans/
+docs/plans/
+settings.local.json

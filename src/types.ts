@@ -7,19 +7,19 @@ export type MatcherFunction = (filename: string, asset: Asset) => boolean | Prom
 export type Pattern = string | RegExp | MatcherFunction;
 
 export interface Rule {
-  label?: string;
-  patterns: Pattern | Pattern[];
-  test?: RegExp;
+	label?: string;
+	patterns: Pattern | Pattern[];
+	test?: RegExp;
 }
 
 export interface PluginOptions {
-  rules?: Rule[];
-  debug?: boolean;
+	rules?: Rule[];
+	debug?: boolean;
 }
 
 export interface ResolvedOptions {
-  rules: Rule[];
-  debug: boolean;
+	rules: Rule[];
+	debug: boolean;
 }
 
 export type { Compilation, Compiler };
