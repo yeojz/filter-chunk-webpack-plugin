@@ -1,25 +1,27 @@
-.DS_Store
-.babelrc
+# Source
+src/
+
+# Tests
+tests/
+fixtures/
+.spec_output/
+coverage/
+vitest.config.ts
+
+# Config
+tsconfig.json
+tsup.config.ts
+turbo.json
+biome.json
 .editorconfig
-.eslintignore
-.eslintrc.json
-.nyc_output
-.nycrc
-.spec_output
-.travis.yml
-.npmrc
 
-/rollup.config.js
-/webpack.config.js
+# CI/CD
+.github/
 
-circle.yml
-coverage
-jsdoc.json
-node_modules
-node_modules-*
-tests
-webpack.config.js
-temp
-fixtures
-*.spec.js
+# Docs
+docs/
+CONTRIBUTING.md
 
+# Misc
+.turbo/
+*.log
