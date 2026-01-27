@@ -1,48 +1,17 @@
 name: Publish to npm
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "package.json"
   workflow_dispatch:
+  pull_request:
+    types: [closed]
+    branches: [main]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    environment: test
-
-    strategy:
-      matrix:
-        node-version: [20, 22]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run build
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Type check
-        run: npm run typecheck
-
-      - name: Test
-        run: npm run test:coverage
-
   publish-dry-run:
-    needs: test
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.merged == true &&
+       contains(github.event.pull_request.labels.*.name, 'ci-release'))
     runs-on: ubuntu-latest
     environment: general
 
@@ -93,9 +62,9 @@ jobs:
           echo "- **Version:** ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Already published:** ${{ steps.check.outputs.exists }}" >> $GITHUB_STEP_SUMMARY
           if [ "${{ steps.check.outputs.exists }}" == "false" ]; then
-            echo "- **Dry run:** ✅ Success" >> $GITHUB_STEP_SUMMARY
+            echo "- **Dry run:** Success" >> $GITHUB_STEP_SUMMARY
           else
-            echo "- **Dry run:** ⏭️ Skipped (version exists)" >> $GITHUB_STEP_SUMMARY
+            echo "- **Dry run:** Skipped (version exists)" >> $GITHUB_STEP_SUMMARY
           fi
 
     outputs:
@@ -130,13 +99,9 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ needs.publish-dry-run.outputs.version }}
-          name: v${{ needs.publish-dry-run.outputs.version }}
-          generate_release_notes: true
+        run: gh release create "v${{ needs.publish-dry-run.outputs.version }}" --generate-notes
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Summary
         run: |
