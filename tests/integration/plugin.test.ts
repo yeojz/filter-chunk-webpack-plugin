@@ -127,3 +127,102 @@ describe("FilterChunkWebpackPlugin Integration", () => {
 		expect(assets.some((a) => a.endsWith(".svg"))).toBe(false);
 	});
 });
+
+describe("FilterChunkWebpackPlugin Include Mode", () => {
+	it("keeps only JS files when include mode with *.js pattern", async () => {
+		const { assets } = await runWebpack("with-css", [
+			new FilterChunkWebpackPlugin({
+				mode: "include",
+				rules: [{ patterns: "*.js" }],
+			}),
+		]);
+
+		expect(assets).toContain("main.js");
+		expect(assets).not.toContain("main.js.map");
+		expect(assets).not.toContain("main.css");
+		expect(assets).not.toContain("main.css.map");
+	});
+
+	it("keeps JS and CSS files with multiple rules (union)", async () => {
+		const { assets } = await runWebpack("with-css", [
+			new FilterChunkWebpackPlugin({
+				mode: "include",
+				rules: [{ patterns: "*.js" }, { patterns: "*.css" }],
+			}),
+		]);
+
+		expect(assets).toContain("main.js");
+		expect(assets).toContain("main.css");
+		expect(assets).not.toContain("main.js.map");
+		expect(assets).not.toContain("main.css.map");
+	});
+
+	it("keeps files matching any pattern in a rule (OR within rule)", async () => {
+		const { assets } = await runWebpack("with-css", [
+			new FilterChunkWebpackPlugin({
+				mode: "include",
+				rules: [{ patterns: ["*.js", "*.css"] }],
+			}),
+		]);
+
+		expect(assets).toContain("main.js");
+		expect(assets).toContain("main.css");
+		expect(assets).not.toContain("main.js.map");
+		expect(assets).not.toContain("main.css.map");
+	});
+
+	it("keeps assets matching regex pattern", async () => {
+		const { assets } = await runWebpack("with-assets", [
+			new FilterChunkWebpackPlugin({
+				mode: "include",
+				rules: [{ patterns: /\.(js|css)$/ }],
+			}),
+		]);
+
+		expect(assets).toContain("main.js");
+		expect(assets).toContain("main.css");
+		expect(assets).not.toContain("main.js.map");
+		expect(assets.some((a) => a.endsWith(".png"))).toBe(false);
+		expect(assets.some((a) => a.endsWith(".svg"))).toBe(false);
+	});
+
+	it("keeps assets matching function pattern", async () => {
+		const { assets } = await runWebpack("with-css", [
+			new FilterChunkWebpackPlugin({
+				mode: "include",
+				rules: [{ patterns: (name) => name.endsWith(".js") || name.endsWith(".css") }],
+			}),
+		]);
+
+		expect(assets).toContain("main.js");
+		expect(assets).toContain("main.css");
+		expect(assets).not.toContain("main.js.map");
+		expect(assets).not.toContain("main.css.map");
+	});
+
+	it("respects test option in include mode", async () => {
+		const { assets } = await runWebpack("with-css", [
+			new FilterChunkWebpackPlugin({
+				mode: "include",
+				rules: [
+					{ patterns: "*", test: /\.js$/ }, // Keep all .js files
+				],
+			}),
+		]);
+
+		expect(assets).toContain("main.js");
+		expect(assets).not.toContain("main.css");
+		expect(assets).not.toContain("main.js.map");
+	});
+
+	it("removes all assets when no rules match in include mode", async () => {
+		const { assets } = await runWebpack("basic", [
+			new FilterChunkWebpackPlugin({
+				mode: "include",
+				rules: [{ patterns: "*.nonexistent" }],
+			}),
+		]);
+
+		expect(assets).toHaveLength(0);
+	});
+});

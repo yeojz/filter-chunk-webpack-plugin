@@ -37,5 +37,28 @@ describe("FilterChunkWebpackPlugin", () => {
 				});
 			}).toThrow("each rule must have patterns");
 		});
+
+		it("creates plugin with exclude mode (default)", () => {
+			const plugin = new FilterChunkWebpackPlugin({
+				rules: [{ patterns: "*.map" }],
+			});
+			expect(plugin).toBeInstanceOf(FilterChunkWebpackPlugin);
+		});
+
+		it("creates plugin with include mode", () => {
+			const plugin = new FilterChunkWebpackPlugin({
+				mode: "include",
+				rules: [{ patterns: "*.js" }],
+			});
+			expect(plugin).toBeInstanceOf(FilterChunkWebpackPlugin);
+		});
+
+		it("throws if mode is invalid", () => {
+			expect(() => {
+				new FilterChunkWebpackPlugin({
+					mode: "invalid" as "exclude",
+				});
+			}).toThrow("mode must be 'exclude' or 'include'");
+		});
 	});
 });
