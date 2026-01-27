@@ -64,10 +64,18 @@ export default {
 
 ### Plugin Options
 
-| Option  | Type      | Default | Description                                      |
-| ------- | --------- | ------- | ------------------------------------------------ |
-| `rules` | `Rule[]`  | `[]`    | Array of rules defining which assets to filter   |
-| `debug` | `boolean` | `false` | Enable debug logging to see filtered assets      |
+| Option  | Type                       | Default     | Description                                                     |
+| ------- | -------------------------- | ----------- | --------------------------------------------------------------- |
+| `mode`  | `'exclude' \| 'include'`   | `'exclude'` | Filter mode: exclude matched assets or include only matched     |
+| `rules` | `Rule[]`                   | `[]`        | Array of rules defining which assets to filter                  |
+| `debug` | `boolean`                  | `false`     | Enable debug logging to see filtered assets                     |
+
+### Mode
+
+The `mode` option determines how rules are applied:
+
+- **`exclude` (default)**: Assets matching any rule are **removed** from output. Rules are processed as a pipeline - each rule filters from the remaining assets.
+- **`include`**: Only assets matching at least one rule are **kept** in output. Rules are combined with OR logic (union) - an asset is kept if any rule matches it.
 
 ### Rule Properties
 
@@ -244,6 +252,57 @@ new FilterChunkWebpackPlugin({
 });
 ```
 
+### Include Mode
+
+Use `mode: 'include'` to keep only assets that match your rules (opposite of the default exclude behavior):
+
+```js
+// Keep only JavaScript and CSS files, remove everything else
+new FilterChunkWebpackPlugin({
+  mode: 'include',
+  rules: [
+    {
+      patterns: '*.js',
+    },
+    {
+      patterns: '*.css',
+    },
+  ],
+});
+```
+
+With include mode, rules use OR logic (union) - an asset is kept if it matches **any** rule:
+
+```js
+// Keep JS, CSS, and specific image assets
+new FilterChunkWebpackPlugin({
+  mode: 'include',
+  rules: [
+    {
+      label: 'scripts',
+      patterns: '*.js',
+    },
+    {
+      label: 'styles',
+      patterns: '*.css',
+    },
+    {
+      label: 'icons',
+      test: /^assets\/icons\//,
+      patterns: '*.svg',
+    },
+  ],
+});
+```
+
+Debug output for include mode shows kept assets instead of filtered:
+
+```
+[FilterChunkWebpackPlugin] Kept: main.js (scripts)
+[FilterChunkWebpackPlugin] Kept: styles.css (styles)
+[FilterChunkWebpackPlugin] Summary: Kept 2 of 5 assets (3 removed)
+```
+
 ## Migration from v2
 
 ### Breaking Changes
@@ -280,9 +339,33 @@ new FilterChunkWebpackPlugin({
 | v2                        | v3                                        |
 | ------------------------- | ----------------------------------------- |
 | `patterns` (top-level)    | `rules[].patterns`                        |
-| `select: false` (exclude) | Default behavior (rules filter/exclude)   |
-| `select: true` (include)  | Use negative patterns or custom functions |
+| `select: false` (exclude) | `mode: 'exclude'` (default)               |
+| `select: true` (include)  | `mode: 'include'`                         |
 | multimatch syntax         | picomatch syntax (mostly compatible)      |
+
+### Migrating `select: true`
+
+If you were using `select: true` in v2 to keep only matching files:
+
+**v2:**
+```js
+new FilterChunkWebpackPlugin({
+  patterns: ['*.js', '*.css'],
+  select: true,
+});
+```
+
+**v3:**
+```js
+new FilterChunkWebpackPlugin({
+  mode: 'include',
+  rules: [
+    {
+      patterns: ['*.js', '*.css'],
+    },
+  ],
+});
+```
 
 ### Pattern Compatibility
 
