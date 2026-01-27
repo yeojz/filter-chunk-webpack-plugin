@@ -6,6 +6,10 @@ import type { Compilation, Compiler, PluginOptions, ResolvedOptions } from "./ty
 const PLUGIN_NAME = "FilterChunkWebpackPlugin";
 
 function resolveOptions(options: PluginOptions): ResolvedOptions {
+	if (options.mode !== undefined && options.mode !== "exclude" && options.mode !== "include") {
+		throw new Error("mode must be 'exclude' or 'include'");
+	}
+
 	if (options.rules !== undefined && !Array.isArray(options.rules)) {
 		throw new Error("rules must be an array");
 	}
@@ -19,6 +23,7 @@ function resolveOptions(options: PluginOptions): ResolvedOptions {
 	}
 
 	return {
+		mode: options.mode ?? "exclude",
 		rules: options.rules ?? [],
 		debug: options.debug ?? false,
 	};
@@ -48,24 +53,67 @@ export class FilterChunkWebpackPlugin {
 				},
 				async (assets, callback) => {
 					const filenames = Object.keys(assets);
-					const toRemove: Array<{ filename: string; label: string }> = [];
+					const isIncludeMode = this.options.mode === "include";
 
-					for (const filename of filenames) {
-						const asset = assets[filename];
-						for (const { matcher, label } of ruleMatchers) {
-							if (await matcher(filename, asset)) {
-								toRemove.push({ filename, label });
-								break;
+					if (isIncludeMode) {
+						// Include mode: collect matches from all rules (union), remove non-matched
+						const toKeep = new Set<string>();
+						const keepLabels = new Map<string, string>();
+
+						for (const filename of filenames) {
+							const asset = assets[filename];
+							for (const { matcher, label } of ruleMatchers) {
+								if (await matcher(filename, asset)) {
+									toKeep.add(filename);
+									if (!keepLabels.has(filename)) {
+										keepLabels.set(filename, label);
+									}
+									break;
+								}
 							}
 						}
+
+						// Remove files not in the keep set
+						const toRemove: Array<{ filename: string; label: string }> = [];
+						for (const filename of filenames) {
+							if (!toKeep.has(filename)) {
+								toRemove.push({ filename, label: "[not matched]" });
+							}
+						}
+
+						for (const { filename } of toRemove) {
+							compilation.deleteAsset(filename);
+						}
+
+						// Log kept files instead of removed
+						for (const filename of toKeep) {
+							const label = keepLabels.get(filename) ?? "[unknown]";
+							logger.kept(filename, label);
+						}
+
+						logger.summary(filenames.length, toRemove.length, isIncludeMode);
+					} else {
+						// Exclude mode: pipeline, remove matches
+						const toRemove: Array<{ filename: string; label: string }> = [];
+
+						for (const filename of filenames) {
+							const asset = assets[filename];
+							for (const { matcher, label } of ruleMatchers) {
+								if (await matcher(filename, asset)) {
+									toRemove.push({ filename, label });
+									break;
+								}
+							}
+						}
+
+						for (const { filename, label } of toRemove) {
+							compilation.deleteAsset(filename);
+							logger.filtered(filename, label);
+						}
+
+						logger.summary(filenames.length, toRemove.length, isIncludeMode);
 					}
 
-					for (const { filename, label } of toRemove) {
-						compilation.deleteAsset(filename);
-						logger.filtered(filename, label);
-					}
-
-					logger.summary(filenames.length, toRemove.length);
 					callback();
 				},
 			);

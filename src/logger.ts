@@ -2,7 +2,7 @@ interface WebpackLogger {
 	info(message: string): void;
 }
 
-interface FilteredEntry {
+interface LogEntry {
 	filename: string;
 	label: string;
 }
@@ -10,7 +10,8 @@ interface FilteredEntry {
 export class Logger {
 	private debug: boolean;
 	private webpackLogger: WebpackLogger | null = null;
-	private filteredEntries: FilteredEntry[] = [];
+	private filteredEntries: LogEntry[] = [];
+	private keptEntries: LogEntry[] = [];
 
 	constructor(debug: boolean) {
 		this.debug = debug;
@@ -28,9 +29,20 @@ export class Logger {
 		}
 	}
 
-	summary(total: number, removed: number): void {
+	kept(filename: string, label: string): void {
+		this.keptEntries.push({ filename, label });
+
+		if (this.debug) {
+			console.log(`[FilterChunk] Kept: ${filename} (label: ${label})`);
+		}
+	}
+
+	summary(total: number, removed: number, isIncludeMode = false): void {
 		const kept = total - removed;
-		const message = `Filtered ${removed} of ${total} assets (${kept} remaining)`;
+
+		const message = isIncludeMode
+			? `Kept ${kept} of ${total} assets (${removed} removed)`
+			: `Filtered ${removed} of ${total} assets (${kept} remaining)`;
 
 		if (this.webpackLogger) {
 			this.webpackLogger.info(message);
@@ -39,10 +51,18 @@ export class Logger {
 		if (this.debug) {
 			console.log(`[FilterChunk] ${message}`);
 
-			if (this.filteredEntries.length > 0) {
+			if (isIncludeMode && this.keptEntries.length > 0) {
+				console.log("[FilterChunk] Kept assets:");
+				const grouped = this.groupByLabel(this.keptEntries);
+				for (const [label, files] of Object.entries(grouped)) {
+					console.log(`  ${label}:`);
+					for (const file of files) {
+						console.log(`    - ${file}`);
+					}
+				}
+			} else if (!isIncludeMode && this.filteredEntries.length > 0) {
 				console.log("[FilterChunk] Filtered assets:");
-
-				const grouped = this.groupByLabel();
+				const grouped = this.groupByLabel(this.filteredEntries);
 				for (const [label, files] of Object.entries(grouped)) {
 					console.log(`  ${label}:`);
 					for (const file of files) {
@@ -53,9 +73,9 @@ export class Logger {
 		}
 	}
 
-	private groupByLabel(): Record<string, string[]> {
+	private groupByLabel(entries: LogEntry[]): Record<string, string[]> {
 		const grouped: Record<string, string[]> = {};
-		for (const entry of this.filteredEntries) {
+		for (const entry of entries) {
 			if (!grouped[entry.label]) {
 				grouped[entry.label] = [];
 			}
