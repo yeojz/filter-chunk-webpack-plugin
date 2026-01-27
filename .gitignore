@@ -33,3 +33,6 @@ npm-debug.log*
 .plans/
 docs/plans/
 settings.local.json
+
+# Planning docs (local only)
+docs/plans/
