@@ -12,12 +12,16 @@ export interface Rule {
 	test?: RegExp;
 }
 
+export type Mode = "exclude" | "include";
+
 export interface PluginOptions {
+	mode?: Mode;
 	rules?: Rule[];
 	debug?: boolean;
 }
 
 export interface ResolvedOptions {
+	mode: Mode;
 	rules: Rule[];
 	debug: boolean;
 }
