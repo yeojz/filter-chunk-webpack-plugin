@@ -57,40 +57,33 @@ export class FilterChunkWebpackPlugin {
 
 					if (isIncludeMode) {
 						// Include mode: collect matches from all rules (union), remove non-matched
-						const toKeep = new Set<string>();
-						const keepLabels = new Map<string, string>();
+						const toKeep = new Map<string, string>();
 
 						for (const filename of filenames) {
 							const asset = assets[filename];
 							for (const { matcher, label } of ruleMatchers) {
 								if (await matcher(filename, asset)) {
-									toKeep.add(filename);
-									keepLabels.set(filename, label);
+									toKeep.set(filename, label);
 									break;
 								}
 							}
 						}
 
 						// Remove files not in the keep set
-						const toRemove: Array<{ filename: string; label: string }> = [];
+						let removedCount = 0;
 						for (const filename of filenames) {
 							if (!toKeep.has(filename)) {
-								toRemove.push({ filename, label: "[not matched]" });
+								compilation.deleteAsset(filename);
+								removedCount++;
 							}
 						}
 
-						for (const { filename } of toRemove) {
-							compilation.deleteAsset(filename);
-						}
-
-						// Log kept files instead of removed
-						for (const filename of toKeep) {
-							// Label is guaranteed to exist since we set it when adding to toKeep
-							const label = keepLabels.get(filename)!;
+						// Log kept files
+						for (const [filename, label] of toKeep) {
 							logger.kept(filename, label);
 						}
 
-						logger.summary(filenames.length, toRemove.length, isIncludeMode);
+						logger.summary(filenames.length, removedCount, isIncludeMode);
 					} else {
 						// Exclude mode: pipeline, remove matches
 						const toRemove: Array<{ filename: string; label: string }> = [];
