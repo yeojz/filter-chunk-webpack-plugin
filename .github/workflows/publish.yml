@@ -88,7 +88,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     permissions:
-      contents: read
+      contents: write
       id-token: write
 
     steps:
@@ -111,6 +111,7 @@ jobs:
         run: npm publish --access public
         env:
           NPM_CONFIG_PROVENANCE: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
         run: gh release create "v${{ needs.publish-dry-run.outputs.version }}" --generate-notes
