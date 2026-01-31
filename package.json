@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@types/node": "^22.10.7",
+    "@types/node": "^25.1.0",
     "@types/picomatch": "^3.0.1",
     "@vitest/coverage-v8": "^4.0.18",
     "css-loader": "^7.1.2",
