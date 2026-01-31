@@ -51,9 +51,7 @@ jobs:
 
       - name: Publish (dry-run)
         if: steps.check.outputs.exists == 'false'
-        run: npm publish --dry-run
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --dry-run --access public
 
       - name: Summary
         run: |

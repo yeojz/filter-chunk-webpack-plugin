@@ -45,21 +45,24 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: bump version to v${{ steps.bump.outputs.version }}"
-          title: "chore: release v${{ steps.bump.outputs.version }}"
-          body: |
-            ## Release v${{ steps.bump.outputs.version }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="release/v${{ steps.bump.outputs.version }}"
+          git checkout -b "$BRANCH"
+          git add package.json package-lock.json
+          git commit -m "chore: bump version to v${{ steps.bump.outputs.version }}"
+          git push origin "$BRANCH"
+          gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "chore: release v${{ steps.bump.outputs.version }}" \
+            --body "## Release v${{ steps.bump.outputs.version }}
 
-            This PR bumps the version to `${{ steps.bump.outputs.version }}` (${{ inputs.version_type }} release).
+          This PR bumps the version to \`${{ steps.bump.outputs.version }}\` (${{ inputs.version_type }} release).
 
-            ---
-            *This PR was automatically created by the version workflow.*
-          branch: release/v${{ steps.bump.outputs.version }}
-          base: main
-          labels: |
-            release
-            automated
-            ci-release
+          ---
+          *This PR was automatically created by the version workflow.*" \
+            --label "release" \
+            --label "automated" \
+            --label "ci-release"
