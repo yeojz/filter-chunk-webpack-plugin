@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Logger } from "../../src/logger";
 
 describe("Logger", () => {
@@ -6,6 +6,10 @@ describe("Logger", () => {
 
 	beforeEach(() => {
 		consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+	});
+
+	afterEach(() => {
+		vi.restoreAllMocks();
 	});
 
 	describe("filtered", () => {
