@@ -65,9 +65,7 @@ export class FilterChunkWebpackPlugin {
 							for (const { matcher, label } of ruleMatchers) {
 								if (await matcher(filename, asset)) {
 									toKeep.add(filename);
-									if (!keepLabels.has(filename)) {
-										keepLabels.set(filename, label);
-									}
+									keepLabels.set(filename, label);
 									break;
 								}
 							}
@@ -87,7 +85,8 @@ export class FilterChunkWebpackPlugin {
 
 						// Log kept files instead of removed
 						for (const filename of toKeep) {
-							const label = keepLabels.get(filename) ?? "[unknown]";
+							// Label is guaranteed to exist since we set it when adding to toKeep
+							const label = keepLabels.get(filename)!;
 							logger.kept(filename, label);
 						}
 

@@ -37,6 +37,22 @@ describe("Logger", () => {
 		});
 	});
 
+	describe("kept", () => {
+		it("does not log when debug is false", () => {
+			const logger = new Logger(false);
+			logger.kept("main.js", "scripts");
+
+			expect(consoleSpy).not.toHaveBeenCalled();
+		});
+
+		it("logs with label when debug is true", () => {
+			const logger = new Logger(true);
+			logger.kept("main.js", "scripts");
+
+			expect(consoleSpy).toHaveBeenCalledWith("[FilterChunk] Kept: main.js (label: scripts)");
+		});
+	});
+
 	describe("summary", () => {
 		it("does not log summary when debug is false and no webpack logger", () => {
 			const logger = new Logger(false);
@@ -67,6 +83,46 @@ describe("Logger", () => {
 			expect(consoleSpy).toHaveBeenCalledWith("    - b.map");
 			expect(consoleSpy).toHaveBeenCalledWith("  licenses:");
 			expect(consoleSpy).toHaveBeenCalledWith("    - c.LICENSE.txt");
+		});
+
+		it("logs include mode summary when debug is true", () => {
+			const logger = new Logger(true);
+			logger.kept("main.js", "scripts");
+			logger.kept("vendor.js", "scripts");
+			logger.summary(5, 3, true);
+
+			expect(consoleSpy).toHaveBeenCalledWith("[FilterChunk] Kept 2 of 5 assets (3 removed)");
+		});
+
+		it("logs grouped kept files by label in include mode", () => {
+			const logger = new Logger(true);
+			logger.kept("main.js", "scripts");
+			logger.kept("vendor.js", "scripts");
+			logger.kept("style.css", "styles");
+			logger.summary(5, 2, true);
+
+			expect(consoleSpy).toHaveBeenCalledWith("[FilterChunk] Kept assets:");
+			expect(consoleSpy).toHaveBeenCalledWith("  scripts:");
+			expect(consoleSpy).toHaveBeenCalledWith("    - main.js");
+			expect(consoleSpy).toHaveBeenCalledWith("    - vendor.js");
+			expect(consoleSpy).toHaveBeenCalledWith("  styles:");
+			expect(consoleSpy).toHaveBeenCalledWith("    - style.css");
+		});
+
+		it("does not log filtered assets list when none filtered in exclude mode", () => {
+			const logger = new Logger(true);
+			logger.summary(5, 0);
+
+			expect(consoleSpy).toHaveBeenCalledWith("[FilterChunk] Filtered 0 of 5 assets (5 remaining)");
+			expect(consoleSpy).not.toHaveBeenCalledWith("[FilterChunk] Filtered assets:");
+		});
+
+		it("does not log kept assets list when none kept in include mode", () => {
+			const logger = new Logger(true);
+			logger.summary(5, 5, true);
+
+			expect(consoleSpy).toHaveBeenCalledWith("[FilterChunk] Kept 0 of 5 assets (5 removed)");
+			expect(consoleSpy).not.toHaveBeenCalledWith("[FilterChunk] Kept assets:");
 		});
 	});
 
