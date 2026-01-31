@@ -42,7 +42,7 @@
     "picomatch": "^4.0.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "^2.3.13",
     "@types/node": "^25.1.0",
     "@types/picomatch": "^4.0.2",
     "@vitest/coverage-v8": "^4.0.18",
