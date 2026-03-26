@@ -39,7 +39,7 @@
     "webpack": "^5.0.0"
   },
   "dependencies": {
-    "picomatch": "^4.0.2"
+    "picomatch": "^4.0.4"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
